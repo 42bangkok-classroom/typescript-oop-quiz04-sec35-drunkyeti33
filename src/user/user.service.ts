@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IUser } from './user.interface';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const filePath = join(__dirname, '../../data/users.json');
@@ -35,5 +35,19 @@ export class UserService {
       }
       return result;
     }, {} as Partial<IUser>);
+  }
+  create(dto: CreateUserDto): IUser {
+    const users = this.findAll();
+    const maxId = users.reduce((max, u) => Math.max(max, Number(u.id)), 0);
+    const newUser: IUser = {
+      id: String(maxId + 1),
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      email: dto.email ?? '',
+      username: dto.username ?? '',
+    };
+    users.push(newUser);
+    writeFileSync(filePath, JSON.stringify(users, null, 2), 'utf-8');
+    return newUser;
   }
 }
