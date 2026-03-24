@@ -1,20 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-
+import { IUser } from './user.interface';
+ 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+ 
   @Get('test')
-  test() {
+  test(): [] {
     return this.userService.test();
   }
-
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
+ 
   @Get(':id')
   findOne(
     @Param('id') id: string,
@@ -24,3 +20,4 @@ export class UserController {
     return this.userService.findOne(id, fieldList);
   }
 }
+ 
