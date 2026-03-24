@@ -17,4 +17,24 @@ export class UserService {
     const userData = JSON.parse(readUserData) as IUser[];
     return userData;
   }
+
+  findOne(id: string, fields?: string[]): Partial<IUser> {
+    const users = this.findAll();
+    const user = users.find((u) => u.id === id);
+ 
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+ 
+    if (!fields || fields.length === 0) {
+      return user;
+    }
+ 
+    return fields.reduce((result, field) => {
+      if (field in user) {
+        result[field] = user[field as keyof IUser];
+      }
+      return result;
+    }, {} as Partial<IUser>);
+  }
 }
